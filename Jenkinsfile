@@ -19,7 +19,7 @@ pipeline{
   }
   post{
     success{
-      archiveArtifacts artifacts: 'rectangle_${MAJOR_VERSION}.${BUILD_NUMBER}.jar', fingerprint: true
+      archiveArtifacts artifacts: "rectangle_${MAJOR_VERSION}.${BUILD_NUMBER}.jar", fingerprint: true
       emailext(
         subject: 'Build Success ${BUILD_NUMBER}',
         body: 'More information of Build ${BUILD_NUMBER}: \n at ${BUILD_URL}',
