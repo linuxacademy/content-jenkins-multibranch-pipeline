@@ -31,8 +31,8 @@ pipeline{
         sh 'git checkout master'
         echo 'Pull latest changes master branch'
         sh 'git pull origin'
-        sh "git config --global user.email "praveen.sbb@gmail.com""
-        sh "git config --global user.name "prvnkmr484""
+        sh 'git config --global user.email praveen.sbb@gmail.com'
+        sh 'git config --global user.name prvnkmr484'
         echo 'merging the changes'
         sh 'git merge development'
         echo 'Push the changes to master'
