@@ -32,11 +32,15 @@ pipeline{
         echo 'Pull latest changes master branch'
         sh 'git config user.email praveen.sbb@gmail.com'
         sh 'git config user.name prvnkmr484'
-        sh 'git pull origin master'
+        sh 'git pull origin'
         echo 'merging the changes'
         sh 'git merge development'
         echo 'Push the changes to master'
         sh 'git push origin master'
+      }
+    }
+    stage('Git Tagging'){
+      steps{
         echo 'Tagging the release'
         sh 'git tag rectangle_${MAJOR_VERSION}.${BUILD_NUMBER}'
         sh 'git push origin rectangle_${MAJOR_VERSION}.${BUILD_NUMBER}'
