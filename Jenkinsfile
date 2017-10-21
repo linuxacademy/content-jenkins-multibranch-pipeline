@@ -29,6 +29,8 @@ pipeline{
         sh 'git pull origin'
         echo 'Checkout master branch'
         sh 'git checkout master'
+        echo 'Pull latest changes master branch'
+        sh 'git pull origin'
         echo 'merging the changes'
         sh 'git merge development'
         echo 'Push the changes to master'
