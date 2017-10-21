@@ -13,7 +13,7 @@ pipeline{
     }
     stage('run') {
       steps{
-        sh 'java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4'
+        sh 'java -jar rectangle_${MAJOR_VERSION}.${BUILD_NUMBER}.jar 3 4'
       }
     }
   }
