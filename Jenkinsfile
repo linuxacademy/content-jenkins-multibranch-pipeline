@@ -32,7 +32,7 @@ pipeline{
         echo 'Pull latest changes master branch'
         sh 'git config user.email praveen.sbb@gmail.com'
         sh 'git config user.name prvnkmr484'
-        sh 'git pull origin'
+        sh 'git pull origin master'
         echo 'merging the changes'
         sh 'git merge development'
         echo 'Push the changes to master'
