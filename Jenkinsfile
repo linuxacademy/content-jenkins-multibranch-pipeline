@@ -16,6 +16,28 @@ pipeline{
         sh 'java -jar rectangle_${MAJOR_VERSION}.${BUILD_NUMBER}.jar 3 4'
       }
     }
+    stage('code promotion'){
+      when{
+        branch 'development'
+      }
+      steps{
+        echo 'Stashing git changes'
+        sh 'git stash'
+        echo 'Checkout development branch'
+        sh 'git checkout development'
+        echo 'Pull the changes'
+        sh 'git pull origin'
+        echo 'Checkout master branch'
+        sh 'git checkout master'
+        echo 'merging the changes'
+        sh 'git merge development'
+        echo 'Push the changes to master'
+        sh 'git push origin master'
+        echo 'Tagging the release'
+        sh 'git tag rectangle_${MAJOR_VERSION}.${BUILD_NUMBER}'
+        sh 'git push origin rectangle_${MAJOR_VERSION}.${BUILD_NUMBER}'
+      }
+    }
   }
   post{
     success{
