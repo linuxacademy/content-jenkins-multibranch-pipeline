@@ -21,8 +21,8 @@ pipeline{
     success{
       archiveArtifacts: artifact rectangle.jar, fingerprint: true
       emailext(
-        subject: 'Build Success ${env.$BUILD_NUMBER}',
-        body: 'More information of Build ${env.$BUILD_NUMBER}: \n at ${env.$BUILD_URL}',
+        subject: 'Build Success ${env.${BUILD_NUMBER}}',
+        body: 'More information of Build ${env.${BUILD_NUMBER}}: \n at ${env.${BUILD_URL}}',
         to: 'praveen.kumar@avizva.com'
       )
     }
