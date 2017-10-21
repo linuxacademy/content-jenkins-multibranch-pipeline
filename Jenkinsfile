@@ -1,74 +1,60 @@
-pipeline {
+pipeline{
   agent any
-
-  environment {
+  environment{
     MAJOR_VERSION = 1
   }
-
-  stages {
-    stage('build') {
-      steps {
+  stages{
+    stage('compile') {
+      steps{
         sh 'javac -d . src/*.java'
         sh 'echo Main-Class: Rectangulator > MANIFEST.MF'
-        sh 'jar -cvmf MANIFEST.MF rectangle.jar *.class'
-      }
-      post {
-        success {
-          archiveArtifacts artifacts: 'rectangle.jar', fingerprint: true
-        }
+        sh 'jar -cvmf MANIFEST.MF rectangle_${MAJOR_VERSION}.${BUILD_NUMBER}.jar *.class'
       }
     }
     stage('run') {
-      steps {
-        sh 'java -jar rectangle.jar 7 9'
+      steps{
+        sh 'java -jar rectangle_${MAJOR_VERSION}.${BUILD_NUMBER}.jar 3 4'
       }
     }
-    stage('Promote Development to Master') {
-      when {
+    stage('code promotion'){
+      when{
         branch 'development'
       }
-      steps {
-        echo "Stashing Local Changes"
-        sh "git stash"
-        echo "Checking Out Development"
+      steps{
+        echo 'Stashing git changes'
+        sh 'git stash'
+        echo 'Checkout development branch'
         sh 'git checkout development'
+        echo 'Pull the changes'
         sh 'git pull origin'
-        echo 'Checking Out Master'
+        echo 'Checkout master branch'
         sh 'git checkout master'
-        echo "Merging Development into Master"
+        echo 'Pull latest changes master branch'
+        sh 'git config user.email praveen.sbb@gmail.com'
+        sh 'git config user.name prvnkmr484'
+        sh 'git pull origin'
+        echo 'merging the changes'
         sh 'git merge development'
-        echo "Git Push to Origin"
+        echo 'Push the changes to master'
         sh 'git push origin master'
       }
-      post {
-        success {
-          emailext(
-            subject: "${env.JOB_NAME} [${env.BUILD_NUMBER}] Development Promoted to Master",
-            body: """<p>'${env.JOB_NAME} [${env.BUILD_NUMBER}]' Development Promoted to Master":</p>
-            <p>Check console output at <a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a></p>""",
-            to: "brandon@linuxacademy.com"
-          )
-        }
+    }
+    stage('Git Tagging'){
+      steps{
+        echo 'Tagging the release'
+        sh 'git tag rectangle_${MAJOR_VERSION}.${BUILD_NUMBER}'
+        sh 'git push origin rectangle_${MAJOR_VERSION}.${BUILD_NUMBER}'
       }
     }
-    stage('Tagging the Release') {
-      when {
-        branch 'master'
-      }
-      steps {
-        sh "git tag rectangle-${env.MAJOR_VERSION}.${BUILD_NUMBER}"
-        sh "git push origin rectangle-${env.MAJOR_VERSION}.${BUILD_NUMBER}"
-      }
-      post {
-        success {
-          emailext(
-            subject: "${env.JOB_NAME} [${env.BUILD_NUMBER}] NEW RELEASE",
-            body: """<p>'${env.JOB_NAME} [${env.BUILD_NUMBER}]' NEW RELEASE":</p>
-            <p>Check console output at <a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a></p>""",
-            to: "brandon@linuxacademy.com"
-          )
-        }
-      }
+  }
+  post{
+    success{
+      archiveArtifacts artifacts: "rectangle_${MAJOR_VERSION}.${BUILD_NUMBER}.jar", fingerprint: true
+      emailext(
+        subject: 'Build Success ${BUILD_NUMBER}',
+        body: 'More information of Build ${BUILD_NUMBER}: \n at ${BUILD_URL}',
+        to: 'praveen.kumar@avizva.com'
+      )
     }
   }
 }
