@@ -8,7 +8,7 @@ pipeline{
       steps{
         sh 'javac -d . src/*.java'
         sh 'echo Main-Class: Rectangulator > MANIFEST.MF'
-        sh 'jar -cvmf MANIFEST.MF rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar *.class'
+        sh 'jar -cvmf MANIFEST.MF rectangle_${MAJOR_VERSION}.${BUILD_NUMBER}.jar *.class'
       }
     }
     stage('run') {
